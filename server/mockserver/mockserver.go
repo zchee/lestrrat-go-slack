@@ -83,6 +83,7 @@ func (h *Handler) validateToken(r *http.Request) bool {
 }
 
 func (h *Handler) InstallHandlers(s *server.Server) {
+	s.Handle("api.test", http.HandlerFunc(h.HandleApiTest))
 	s.Handle("auth.revoke", http.HandlerFunc(h.HandleAuthRevoke))
 	s.Handle("auth.test", http.HandlerFunc(h.HandleAuthTest))
 	s.Handle("bots.info", http.HandlerFunc(h.HandleBotsInfo))
@@ -154,6 +155,31 @@ func (h *Handler) InstallHandlers(s *server.Server) {
 	s.Handle("users.profile.set", http.HandlerFunc(h.HandleUsersProfileSet))
 	s.Handle("users.setActive", http.HandlerFunc(h.HandleUsersSetActive))
 	s.Handle("users.setPresence", http.HandlerFunc(h.HandleUsersSetPresence))
+}
+
+// HandleApiTest is the default handler method for the Slack api.test API
+func (h *Handler) HandleApiTest(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	if !h.validateToken(r) {
+		http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
+		return
+	}
+	var c slack.ApiTestCall
+	if err := c.FromValues(r.Form); err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	var buf bytes.Buffer
+	if err := json.NewEncoder(&buf).Encode(StockResponse("api.test")); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set(`Content-Type`, `application/json; charset=utf-8`)
+	w.WriteHeader(http.StatusOK)
+	buf.WriteTo(w)
 }
 
 // HandleAuthRevoke is the default handler method for the Slack auth.revoke API

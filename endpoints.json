@@ -1,5 +1,18 @@
 [
   {
+    "name": "api.test",
+    "args": [
+      {
+        "name": "error",
+        "type": "string"
+      },
+      {
+        "name": "foo",
+        "type": "string"
+      }
+    ]
+  },
+  {
     "name": "auth.revoke",
     "args": [
       {

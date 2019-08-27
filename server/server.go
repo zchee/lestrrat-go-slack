@@ -23,6 +23,7 @@ func New(options ...Option) *Server {
 	return &Server{
 		prefix: prefix,
 		handlers: map[string]http.Handler{
+			"api.test":                http.HandlerFunc(unimplemented),
 			"auth.revoke":             http.HandlerFunc(unimplemented),
 			"auth.test":               http.HandlerFunc(unimplemented),
 			"bots.info":               http.HandlerFunc(unimplemented),

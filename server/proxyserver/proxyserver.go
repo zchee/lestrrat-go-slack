@@ -40,6 +40,7 @@ func (h *Handler) ProxyHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) InstallHandlers(s *server.Server) {
+	s.Handle("api.test", http.HandlerFunc(h.mock.HandleApiTest))
 	s.Handle("auth.revoke", http.HandlerFunc(h.mock.HandleAuthRevoke))
 	s.Handle("auth.test", http.HandlerFunc(h.ProxyHandler))
 	s.Handle("bots.info", http.HandlerFunc(h.ProxyHandler))
